@@ -16,6 +16,7 @@ Once the install is complete, we need to set the project directory
 
 `
 'proton':
+
   'project_path': 'YOUR_PROJECT_PATH'
 `
 * Replace `YOUR_PROJECT_PATH` with the full path to your project
