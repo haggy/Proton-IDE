@@ -13,6 +13,7 @@ Once the install is complete, we need to set the project directory
 
 * Click *Atom* in the menu and click *Open Your Config*
 * Add the following to the very bottom of the configuration file:
+
 `
 'proton':
   'project_path': 'YOUR_PROJECT_PATH'
