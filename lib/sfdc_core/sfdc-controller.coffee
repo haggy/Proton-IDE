@@ -2,13 +2,15 @@ fs = require 'fs'
 fsPlus = require 'fs-plus'
 async = require 'async'
 Config = require '../helpers/config'
+AtomHelper = require '../helpers/atom-helper'
+MetadataFileHelper = require '../helpers/metadata-file-helper'
 SfdcAuthService = require './sfdc-auth-service'
 ApexClassService = require './apex-class-service'
 ApexPageService = require './apex-page-service'
 ApexComponentService = require './apex-component-service'
 ApexTriggerService = require './apex-trigger-service'
 MetadataContainerService = require './metadata-container-service'
-MetadataItemView = require('./metadata-item-view')
+MetadataItemView = require './metadata-item-view'
 AsyncLoaderView = require '../async-loader-view'
 #Assign jQuery to global
 # For some reason, using Atom builtin jQuery doesn't work
@@ -103,6 +105,14 @@ class SfdcController
     this.pageArrayIndexMap = {}
     this.trigArrayIndexMap = {}
     this.compArrayIndexMap = {}
+
+  getAsyncLoader: (text = 'Loading some complicated codez...')->
+    if not @asyncLoader
+      @asyncLoader = new AsyncLoaderView loadingText: text
+      atom.workspaceView.append(@asyncLoader)
+    else
+      @asyncLoader.setLoadingText(text)
+    return @asyncLoader
 
   selectMetadata: ->
     self = this
@@ -418,7 +428,7 @@ class SfdcController
     fsPlus.writeFile "#{fullPath}/components/#{fileName}", content, null, createFileResult
 
 
-  saveFile: (fileName, content) ->
+  saveFile: ->
     self = this
     accessToken = Config.read('token')
     if not accessToken
@@ -428,30 +438,71 @@ class SfdcController
     loader = self.getAsyncLoader('Deploying your codez to SFDC...')
     loader.show()
 
-    editor = atom.workspace.activePaneItem
-    fileContents = editor.getText()
-    filePath = editor.getPath()
+    fileContents = AtomHelper.getActiveEditorText()
+    filePath = AtomHelper.getActiveEditor().getPath()
     metaFilePath = "#{filePath}.meta.json"
     fs.readFile metaFilePath, 'utf8', (err, data) ->
       if err
         alert "Metadata error: #{err}"
         return
+
       metadata = JSON.parse data
-      console.log metadata
       mcs = new MetadataContainerService(accessToken)
       mcs.saveEntity metadata.type, metadata.id, fileContents, (result) ->
         loader.remove()
         console.log "DONE: %j", result
         if result.success
+          AtomHelper.saveActiveItem()
           alert 'All your codez are good'
         else
           alert "Your codez are bad:\n#{result.compilerErrors[0].problem}\nLine: #{result.compilerErrors[0].line}"
 
-
-  getAsyncLoader: (text = 'Loading some complicated codez...')->
-    if not @asyncLoader
-      @asyncLoader = new AsyncLoaderView loadingText: text
-      atom.workspaceView.append(@asyncLoader)
+  getAccessToken: ->
+    if @token
+      return @token
     else
-      @asyncLoader.setLoadingText(text)
-    return @asyncLoader
+      @token = Config.read('token')
+      if @token
+        return @token
+      else
+        alert "You must be logged in for this action!"
+        return null
+
+  refreshCurrentFile: ->
+    self = this
+
+    accessToken = self.getAccessToken()
+
+    if not confirm("This will overwrite any changes you made. Are you sure?")
+      return
+
+    loader = self.getAsyncLoader('Getting you a fresh, new copy...')
+    loader.show()
+
+    MetadataFileHelper.getMetadataForActiveFile (err, metadata) ->
+      if err
+        loader.remove()
+        alert "Error opening metadata file:\n\n#{err}"
+        return
+
+      service = null
+      switch metadata.type
+        when 'class'
+          service = new ApexClassService(accessToken)
+        when 'trigger'
+          service = new ApexTriggerService(accessToken)
+        when 'component'
+          service = new ApexComponentService(accessToken)
+        when 'page'
+          service = new ApexPageService(accessToken)
+
+      if not service
+        loader.remove()
+        alert "Invalid type specified in metadata file!"
+        return
+
+      service.retrieve metadata.id, (record) ->
+        loader.remove()
+        console.log "Refresh data: %j", record
+        AtomHelper.setActiveEditorText(record[service.sobjectContentField])
+        AtomHelper.saveActiveItem()

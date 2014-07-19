@@ -73,6 +73,7 @@ class SfdcView extends View
   initialize: (serializeState) ->
     atom.workspaceView.command "sfdc:toggle", => @toggle()
     atom.workspaceView.command "sfdc:saveCurrentFile", => @saveCurrentFile()
+    atom.workspaceView.command "sfdc:refreshCurrentFile", => @refreshCurrentFile()
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
@@ -100,3 +101,7 @@ class SfdcView extends View
     console.log 'Saving to server....'
     cont = new SfdcController()
     cont.saveFile()
+
+  refreshCurrentFile: ->
+    console.log 'Refreshing current file...'
+    new SfdcController().refreshCurrentFile()

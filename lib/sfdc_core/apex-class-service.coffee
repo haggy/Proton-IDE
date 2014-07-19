@@ -27,3 +27,7 @@ class ApexClassService extends BaseToolingService
     where = "where%20NamespacePrefix%20%3D%20null"
     orderBy = "order by Name"
     @get 'query', "q=#{select}+#{from}+#{where}+#{orderBy}", handleResult
+
+  # retrieve: (id, cb) ->
+  #   @getById this.sobjectType, id, (data, response) ->
+  #     cb(data)

@@ -6,7 +6,8 @@ class ApexPageService extends BaseToolingService
   constructor: (token) ->
     super(token)
     @sobjectType = 'ApexPage'
-
+    @sobjectContentField = 'Markup'
+    
   retrieveAll: (cb) ->
     self = this
     records = []

@@ -1,12 +1,12 @@
 {
-  "name": "sfdc",
+  "name": "Proton IDE",
   "main": "./lib/sfdc",
-  "version": "0.0.0",
-  "description": "A short description of your package",
+  "version": "0.0.1",
+  "description": "Salesforce.com IDE for the Atom editor",
   "activationEvents": [
-    "sfdc:toggle", "sfdc:convert", "sfdc:saveCurrentFile"
+    "sfdc:toggle", "sfdc:saveCurrentFile", "sfdc:refreshCurrentFile"
   ],
-  "repository": "https://github.com/atom/sfdc",
+  "repository": "https://github.com/haggy/Proton-IDE",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"

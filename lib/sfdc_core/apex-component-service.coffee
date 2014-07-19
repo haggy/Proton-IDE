@@ -6,6 +6,7 @@ class ApexComponentService extends BaseToolingService
   constructor: (token) ->
     super(token)
     @sobjectType = 'ApexComponent'
+    @sobjectContentField = 'Markup'
 
   retrieveAll: (cb) ->
     self = this

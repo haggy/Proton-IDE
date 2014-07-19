@@ -6,6 +6,7 @@ class MetadataContainerService extends BaseToolingService
 
   constructor: (token) ->
     super(token)
+    @sobjectType = 'MetadataContainer'
     @containerRef = null
     @defaultContainerName = 'SfdcNeutrinoContainer'
 
