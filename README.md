@@ -1,5 +1,7 @@
-# sfdc package
+# Proton IDE
 
-A short description of your package.
+Salesforce.com IDE for the Atom editor
 
-![A screenshot of your spankin' package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+## Installation
+__Proton__ is available as an Atom package
+`cmd+,` on a Mac to pull up your Atom settings. Search for Proton IDE.
