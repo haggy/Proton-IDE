@@ -4,6 +4,8 @@ Config = require './helpers/config'
 #Assign jQuery to global
 window.$ = window.jQuery = require('jQuery')
 
+require './ext/jquery-center.js'
+
 module.exports =
 class SfdcView extends View
   @defaultProjPath: Config.read('project_path')
@@ -105,3 +107,6 @@ class SfdcView extends View
   refreshCurrentFile: ->
     console.log 'Refreshing current file...'
     new SfdcController().refreshCurrentFile()
+
+  center: ->
+    $(this).center()
