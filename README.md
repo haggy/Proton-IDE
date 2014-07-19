@@ -8,17 +8,19 @@ Atom settings. Search for Proton IDE.
 
 ### Configuration
 Once the install is complete, we need to set the project directory
-(where all your projects will be saved. __Please note__ that in the future,
- we will automate this). To do this:
+(where all your projects will be saved). To do this:
 
 * Click *Atom* in the menu and click *Open Your Config*
-* Add the following to the very bottom of the configuration file:
+* Find the following lines (it will be near the very bottom of the configuration file):
 
 ```
 'proton':
-  'project_path': 'YOUR_PROJECT_PATH'
+  'project_path': ''
 ```
-* Replace `YOUR_PROJECT_PATH` with the full path to your project
+* In between the empty single quotes, add the full path to your project. __NOTE:__
+  This directory must exist so make sure to create it if it doesn't.
+* Do not add a trailing slash. For example, if you're on a Mac and you want your project
+  to be in your home directory in a folder called atom you would use: `/Users/yourusername/atom`
 
 That's it! Keep reading for instructions on using the Proton IDE.
 

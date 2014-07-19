@@ -1,7 +1,7 @@
 
 module.exports =
   class Config
-    this.keyPath = 'sfdc.'
+    this.keyPath = 'proton.'
 
     this.read = (key) ->
       atom.config.get(this.keyPath + key)

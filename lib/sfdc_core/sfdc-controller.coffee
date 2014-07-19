@@ -123,6 +123,7 @@ class SfdcController
       classServ.retrieveAll (classes) ->
         self.view.hideMetaLoader()
         if not classes or classes.length is 0
+          cb(null, 'classes')
           return
         self.classes = classes
         # Map of record ID to index
@@ -144,6 +145,7 @@ class SfdcController
       pagesServ.retrieveAll (pages) ->
         self.view.hideMetaLoader()
         if not pages or pages.length is 0
+          cb(null, 'pages')
           return
         self.pages = pages
         # Map of record ID to index
@@ -165,6 +167,7 @@ class SfdcController
       componentServ.retrieveAll (comps) ->
         self.view.hideMetaLoader()
         if not comps or comps.length is 0
+          cb(null, 'comps')
           return
         self.comps = comps
         # Map of record ID to index
@@ -186,6 +189,7 @@ class SfdcController
       triggerServ.retrieveAll (trigs) ->
         self.view.hideMetaLoader()
         if not trigs or trigs.length is 0
+          cb(null, 'trigs')
           return
         self.trigs = trigs
         # Map of record ID to index

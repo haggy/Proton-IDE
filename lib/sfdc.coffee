@@ -1,12 +1,20 @@
 SfdcView = require './sfdc-view'
-
+Config = require './helpers/config'
 #Assign jQuery to global
 window.$ = window.jQuery = require('jQuery')
 
 module.exports =
   sfdcView: null
 
+  configDefaults:
+    proton:
+      project_path: ''
+
   activate: (state) ->
+    # Set default config
+    if not Config.read('project_path')
+      Config.write('project_path', '')
+      
     @sfdcView = new SfdcView(state.sfdcViewState)
     atom.workspaceView.command "sfdc:convert", => @convert()
 
