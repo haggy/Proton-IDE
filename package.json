@@ -1,0 +1,20 @@
+{
+  "name": "sfdc",
+  "main": "./lib/sfdc",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "activationEvents": [
+    "sfdc:toggle", "sfdc:convert", "sfdc:saveCurrentFile"
+  ],
+  "repository": "https://github.com/atom/sfdc",
+  "license": "MIT",
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "dependencies": {
+    "jQuery": "*",
+    "node-rest-client": "1.0.*",
+    "fs-plus": "*",
+    "async": "*"
+  }
+}

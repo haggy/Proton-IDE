@@ -1,0 +1,19 @@
+# See https://atom.io/docs/latest/creating-a-package#menus for more details
+'context-menu':
+  '.overlayer':
+    'Sfdc: New Project': 'sfdc:toggle',
+    'Sfdc: Save to server': 'sfdc:saveCurrentFile'
+    '-': '-'
+'menu': [
+  {
+    'label': 'Packages'
+    'submenu': [
+      'label': 'sfdc'
+      'submenu': [
+        { 'label': 'Toggle', 'command': 'sfdc:toggle' }
+        { 'label': 'Save to server', 'command': 'sfdc:saveCurrentFile' }
+        { 'label': 'New Project', 'command': 'sfdc:toggle' }
+      ]
+    ]
+  }
+]
