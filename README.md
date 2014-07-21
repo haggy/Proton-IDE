@@ -2,6 +2,9 @@
 
 Salesforce.com IDE for the Atom editor
 
+__NOTE:__ This IDE is still in BETA and is being actively developed. If you encounter any issues
+please log an issue in Github and I'll look into it ASAP. Thanks and enjoy!
+
 ## Installation
 __Proton__ is available as an Atom package. Use `cmd+,` on a Mac to pull up your
 Atom settings. Search for Proton IDE.
