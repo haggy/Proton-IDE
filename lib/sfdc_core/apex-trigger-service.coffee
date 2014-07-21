@@ -6,6 +6,12 @@ class ApexTriggerService extends BaseToolingService
   constructor: (token) ->
     super(token)
     @sobjectType = 'ApexTrigger'
+    @requiredCreateFields =
+      Name:"Name"
+      Body: "Trigger Body"
+      TableEnumOrId: "Object type"
+    @fileExtension = 'trigger'
+    @defaultFolder = 'triggers'
 
   retrieveAll: (cb) ->
     self = this
@@ -22,8 +28,14 @@ class ApexTriggerService extends BaseToolingService
       else
         cb(records)
 
-    select = "Select+Id,Name,Status,Body,BodyCrc,ApiVersion,LastModifiedDate,LastModifiedById"
-    from = "from+#{@sobjectType}"
-    where = "where%20NamespacePrefix%20%3D%20null"
+    select = "Select Id,Name,Status,Body,BodyCrc,ApiVersion,LastModifiedDate,LastModifiedById"
+    from = "from #{@sobjectType}"
+    where = "where NamespacePrefix = null"
     orderBy = "order by Name"
-    @get 'query', "q=#{select}+#{from}+#{where}+#{orderBy}", handleResult
+    @get 'query', "q=#{select} #{from} #{where} #{orderBy}", handleResult
+
+  getDefaultCreateContent: (params) ->
+    objType = params.TableEnumOrId
+    dmlConditions = "before insert, before update, before delete, after insert,"
+    dmlConditions += " after update, after delete, after undelete"
+    return "trigger #{params.Name} on #{objType} (#{dmlConditions}) {\n\n}"

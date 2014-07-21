@@ -7,6 +7,12 @@ class ApexComponentService extends BaseToolingService
     super(token)
     @sobjectType = 'ApexComponent'
     @sobjectContentField = 'Markup'
+    @requiredCreateFields =
+      Name:"Name"
+      MasterLabel: "Master Label"
+      Markup: "Component Markup"
+    @fileExtension = 'component'
+    @defaultFolder = 'components'
 
   retrieveAll: (cb) ->
     self = this
@@ -23,8 +29,11 @@ class ApexComponentService extends BaseToolingService
       else
         cb(records)
 
-    select = "Select+Id,Markup,Name,ApiVersion,LastModifiedDate,LastModifiedById"
-    from = "from+#{@sobjectType}"
-    where = "where%20NamespacePrefix%20%3D%20null"
+    select = "Select Id,Markup,Name,ApiVersion,LastModifiedDate,LastModifiedById"
+    from = "from #{@sobjectType}"
+    where = "where NamespacePrefix = null"
     orderBy = "order by Name"
-    @get 'query', "q=#{select}+#{from}+#{where}+#{orderBy}", handleResult
+    @get 'query', "q=#{select} #{from} #{where} #{orderBy}", handleResult
+
+  getDefaultCreateContent: ->
+    return "<apex:component>\n\n</apex:component>"

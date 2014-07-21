@@ -6,6 +6,11 @@ class ApexClassService extends BaseToolingService
   constructor: (token) ->
     super(token)
     @sobjectType = 'ApexClass'
+    @requiredCreateFields =
+      Name:"Name"
+      Body: "Class Body"
+    @fileExtension = 'cls'
+    @defaultFolder = 'classes'
 
   retrieveAll: (cb) ->
     self = this
@@ -22,12 +27,11 @@ class ApexClassService extends BaseToolingService
       else
         cb(records)
 
-    select = "Select+Id,Body,Name,ApiVersion,Status,LastModifiedDate,LastModifiedById"
-    from = "from+#{@sobjectType}"
-    where = "where%20NamespacePrefix%20%3D%20null"
+    select = "Select Id,Body,Name,ApiVersion,Status,LastModifiedDate,LastModifiedById"
+    from = "from #{@sobjectType}"
+    where = "where NamespacePrefix = null"
     orderBy = "order by Name"
-    @get 'query', "q=#{select}+#{from}+#{where}+#{orderBy}", handleResult
+    @get 'query', "q=#{select} #{from} #{where} #{orderBy}", handleResult
 
-  # retrieve: (id, cb) ->
-  #   @getById this.sobjectType, id, (data, response) ->
-  #     cb(data)
+  getDefaultCreateContent: (params) ->
+    return "public class #{params.Name} {\n\n}"

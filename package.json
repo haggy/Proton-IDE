@@ -6,7 +6,12 @@
   "activationEvents": [
     "sfdc:toggle",
     "sfdc:saveCurrentFile",
-    "sfdc:refreshCurrentFile"
+    "sfdc:refreshCurrentFile",
+    "sfdc:deleteCurrentFile",
+    "sfdc:createClass",
+    "sfdc:createPage",
+    "sfdc:createTrigger",
+    "sfdc:createComponent"
   ],
   "repository": "https://github.com/haggy/Proton-IDE",
   "license": "MIT",

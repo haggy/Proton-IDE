@@ -1,6 +1,9 @@
 {View} = require 'atom'
 SfdcController = require './sfdc_core/sfdc-controller'
 Config = require './helpers/config'
+NewMetadataView = require './sfdc_core/new-metadata-view'
+NewMetadataController = require './sfdc_core/new-metadata-controller'
+
 #Assign jQuery to global
 window.$ = window.jQuery = require('jQuery')
 
@@ -76,6 +79,11 @@ class SfdcView extends View
     atom.workspaceView.command "sfdc:toggle", => @toggle()
     atom.workspaceView.command "sfdc:saveCurrentFile", => @saveCurrentFile()
     atom.workspaceView.command "sfdc:refreshCurrentFile", => @refreshCurrentFile()
+    atom.workspaceView.command "sfdc:deleteCurrentFile", => @deleteCurrentFile()
+    atom.workspaceView.command "sfdc:createClass", => @createClass()
+    atom.workspaceView.command "sfdc:createPage", => @createPage()
+    atom.workspaceView.command "sfdc:createTrigger", => @createTrigger()
+    atom.workspaceView.command "sfdc:createComponent", => @createComponent()
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
@@ -92,7 +100,6 @@ class SfdcView extends View
     this.find('#metadata-loader').remove()
 
   toggle: ->
-    console.log "SfdcView was toggled!"
     if @hasParent()
       @detach()
     else
@@ -100,13 +107,59 @@ class SfdcView extends View
       @cont = new SfdcController(this)
 
   saveCurrentFile: ->
-    console.log 'Saving to server....'
     cont = new SfdcController()
     cont.saveFile()
 
   refreshCurrentFile: ->
-    console.log 'Refreshing current file...'
     new SfdcController().refreshCurrentFile()
+
+  deleteCurrentFile: ->
+    new SfdcController().deleteCurrentFile()
+
+  createClass: ->
+    params =
+      type: 'class'
+      description: 'Enter a name for the Apex Class'
+      fields:
+        Name: 'Class Name'
+    metaView = new NewMetadataView(params)
+    atom.workspaceView.append(metaView)
+    new NewMetadataController(metaView)
+
+  createTrigger: ->
+    params =
+      type: 'trigger'
+      description: 'Enter a name for the Apex Trigger'
+      fields:
+        Name: 'Trigger Name'
+        TableEnumOrId: 'Object Type'
+    metaView = new NewMetadataView(params)
+    atom.workspaceView.append(metaView)
+    new NewMetadataController(metaView)
+
+  createPage: ->
+    params =
+      type: 'page'
+      description: 'Enter a name for the new Visualforce Page'
+      fields:
+        Name: 'Page API Name'
+        MasterLabel: 'Label'
+
+    metaView = new NewMetadataView(params)
+    atom.workspaceView.append(metaView)
+    new NewMetadataController(metaView)
+
+  createComponent: ->
+    params =
+      type: 'component'
+      description: 'Enter a name for the new Component'
+      fields:
+        Name: 'API Name'
+        MasterLabel: 'Label'
+
+    metaView = new NewMetadataView(params)
+    atom.workspaceView.append(metaView)
+    new NewMetadataController(metaView)
 
   center: ->
     $(this).center()

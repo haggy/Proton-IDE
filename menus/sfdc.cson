@@ -4,6 +4,7 @@
     'Proton: New Project': 'sfdc:toggle',
     'Proton: Save to server': 'sfdc:saveCurrentFile'
     'Proton: Refresh from Server': 'sfdc:refreshCurrentFile'
+    'Proton: Delete from Server': 'sfdc:deleteCurrentFile'
     '-': '-'
 'menu': [
   {
@@ -12,8 +13,16 @@
       'label': 'Proton'
       'submenu': [
         { 'label': 'New Project', 'command': 'sfdc:toggle' }
+        'label': 'Create metadata'
+        'submenu': [
+          { 'label': 'New Apex Class', 'command': 'sfdc:createClass' }
+          { 'label': 'New Apex Trigger', 'command': 'sfdc:createTrigger' }
+          { 'label': 'New Visualforce Page', 'command': 'sfdc:createPage' }
+          { 'label': 'New VF Component', 'command': 'sfdc:createComponent' }
+        ]
         { 'label': 'Save current file', 'command': 'sfdc:saveCurrentFile' }
         { 'label': 'Refresh current file', 'command': 'sfdc:refreshCurrentFile' }
+        { 'label': 'Delete current file', 'command': 'sfdc:deleteCurrentFile' }
       ]
     ]
   }

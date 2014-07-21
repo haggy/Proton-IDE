@@ -1,17 +1,18 @@
 fs = require 'fs'
 fsPlus = require 'fs-plus'
 async = require 'async'
+BaseController = require './base-controller'
 Config = require '../helpers/config'
 AtomHelper = require '../helpers/atom-helper'
-MetadataFileHelper = require '../helpers/metadata-file-helper'
 SfdcAuthService = require './sfdc-auth-service'
+MetadataFileHelper = require '../helpers/metadata-file-helper'
 ApexClassService = require './apex-class-service'
 ApexPageService = require './apex-page-service'
 ApexComponentService = require './apex-component-service'
 ApexTriggerService = require './apex-trigger-service'
 MetadataContainerService = require './metadata-container-service'
 MetadataItemView = require './metadata-item-view'
-AsyncLoaderView = require '../async-loader-view'
+
 #Assign jQuery to global
 # For some reason, using Atom builtin jQuery doesn't work
 # with dropdown menus
@@ -21,12 +22,10 @@ require '../ext/bootstrap/tabs.js'
 require '../ext/bootstrap/dropdowns.js'
 
 module.exports =
-class SfdcController
+class SfdcController extends BaseController
 
   constructor: (view) ->
-    @view = view
-    @token = null
-
+    super(view)
     if @view
       this.init()
 
@@ -105,14 +104,6 @@ class SfdcController
     this.pageArrayIndexMap = {}
     this.trigArrayIndexMap = {}
     this.compArrayIndexMap = {}
-
-  getAsyncLoader: (text = 'Loading some complicated codez...')->
-    if not @asyncLoader
-      @asyncLoader = new AsyncLoaderView loadingText: text
-      atom.workspaceView.append(@asyncLoader)
-    else
-      @asyncLoader.setLoadingText(text)
-    return @asyncLoader
 
   selectMetadata: ->
     self = this
@@ -461,17 +452,6 @@ class SfdcController
         else
           alert "Your codez are bad:\n#{result.compilerErrors[0].problem}\nLine: #{result.compilerErrors[0].line}"
 
-  getAccessToken: ->
-    if @token
-      return @token
-    else
-      @token = Config.read('token')
-      if @token
-        return @token
-      else
-        alert "You must be logged in for this action!"
-        return null
-
   refreshCurrentFile: ->
     self = this
 
@@ -507,6 +487,57 @@ class SfdcController
 
       service.retrieve metadata.id, (record) ->
         loader.remove()
-        console.log "Refresh data: %j", record
         AtomHelper.setActiveEditorText(record[service.sobjectContentField])
         AtomHelper.saveActiveItem()
+
+  deleteCurrentFile: ->
+    self = this
+    if not confirm("This will delete the class from SFDC servers. Are you sure?")
+      return
+
+    # Get the path early in case user changes tabs while delete operation
+    # is in progress
+    filePath = AtomHelper.getActiveEditor().getPath()
+
+    loader = self.getAsyncLoader('Deleting...')
+    loader.show()
+
+    accessToken = self.getAccessToken()
+    MetadataFileHelper.getMetadataForActiveFile (err, metadata) ->
+      if err
+        loader.remove()
+        alert "Error opening metadata file:\n\n#{err}"
+        return
+
+      service = null
+      switch metadata.type
+        when 'class'
+          service = new ApexClassService(accessToken)
+        when 'trigger'
+          service = new ApexTriggerService(accessToken)
+        when 'component'
+          service = new ApexComponentService(accessToken)
+        when 'page'
+          service = new ApexPageService(accessToken)
+
+      if not service
+        loader.remove()
+        alert "Invalid type specified in metadata file!"
+        return
+
+
+      removeFile = (err, remoteDeleted) ->
+        fs.unlink filePath, (err) ->
+          if err
+            alert "Error deleting file locally:\n\nerr"
+            return
+          removeMetadataFile()
+
+      removeMetadataFile = ->
+        fs.unlink "#{filePath}.meta.json", (err) ->
+          if err
+            alert "Error deleting metadata file:\n\nerr"
+        loader.remove()
+
+      # Delete record on server and local
+      service.deleteRecord metadata.id, removeFile

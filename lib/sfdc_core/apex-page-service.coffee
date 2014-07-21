@@ -7,7 +7,13 @@ class ApexPageService extends BaseToolingService
     super(token)
     @sobjectType = 'ApexPage'
     @sobjectContentField = 'Markup'
-    
+    @requiredCreateFields =
+      Name:"Name"
+      MasterLabel: "Label"
+      Markup: "Page content"
+    @fileExtension = 'page'
+    @defaultFolder = 'pages'
+
   retrieveAll: (cb) ->
     self = this
     records = []
@@ -23,8 +29,11 @@ class ApexPageService extends BaseToolingService
       else
         cb(records)
 
-    select = "Select+Id,Markup,Name,ApiVersion,LastModifiedDate,LastModifiedById"
-    from = "from+#{@sobjectType}"
-    where = "where%20NamespacePrefix%20%3D%20null"
+    select = "Select Id,Markup,Name,ApiVersion,LastModifiedDate,LastModifiedById"
+    from = "from #{@sobjectType}"
+    where = "where NamespacePrefix = null"
     orderBy = "order by Name"
-    @get 'query', "q=#{select}+#{from}+#{where}+#{orderBy}", handleResult
+    @get 'query', "q=#{select} #{from} #{where} #{orderBy}", handleResult
+
+  getDefaultCreateContent: ->
+    return "<apex:page>\n\n</apex:page>"

@@ -47,3 +47,10 @@ If you want to pull the most recent version of a file from SFDC:
 
 * Right click anywhere in the active file window and click *Proton: Refresh from server*
 * Navigate to __Packages -> Proton__ and click *Refresh current file*
+
+## Deleting a file from SFDC
+If you want to delete a file from SFDC (and locally):
+
+* Right click anywhere in the active file window and click *Proton: Delete from server*
+  __OR__
+* Navigate to __Packages -> Proton__ and click *Refresh current file*
