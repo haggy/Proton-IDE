@@ -40,18 +40,19 @@ That's it! Keep reading for instructions on using the Proton IDE.
 To deploy the changes you made to a file:
 
 * Right click anywhere in the active file window and click *Proton: Save to server*
+__OR__
 * Navigate to __Packages -> Proton__ and click *Save current file*
 
 ## Refreshing a file from SFDC
 If you want to pull the most recent version of a file from SFDC:
 
 * Right click anywhere in the active file window and click *Proton: Refresh from server*
+__OR__
 * Navigate to __Packages -> Proton__ and click *Refresh current file*
 
 ## Deleting a file from SFDC
 If you want to delete a file from SFDC (and locally):
 
 * Right click anywhere in the active file window and click *Proton: Delete from server*
-
   __OR__
-* Navigate to __Packages -> Proton__ and click *Refresh current file*
+* Navigate to __Packages -> Proton__ and click *Delete current file*
