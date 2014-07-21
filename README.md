@@ -56,3 +56,11 @@ If you want to delete a file from SFDC (and locally):
 * Right click anywhere in the active file window and click *Proton: Delete from server*
   __OR__
 * Navigate to __Packages -> Proton__ and click *Delete current file*
+
+## Creating new metadata
+You can create new Classes/Triggers/Pages/Components right from the IDE.
+
+* Navigate to __Packages -> Proton -> Create Metadata__
+* Click on the metadata type that you'd like to create
+* Fill in all required fields
+* Click create
