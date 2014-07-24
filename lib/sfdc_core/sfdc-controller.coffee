@@ -82,7 +82,7 @@ class SfdcController extends BaseController
     var idx = @dirtyMetadataIds.indexOf(id)
     if idx > 0
       @dirtyMetadataIds.splice(idx, 1)
-    
+
   setEnvironment: (env) ->
     @environment = env
 
@@ -480,17 +480,6 @@ class SfdcController extends BaseController
           service = new ApexComponentService(accessToken)
         when 'page'
           service = new ApexPageService(accessToken)
-
-      service.retrieve metadata.id, (record) ->
-        # Check that the record hasn't been modified
-        # by another user
-        console.log record
-        # myUserId = Config.read('user_id')
-        # if myUserId isnt record.LastModifiedById
-        #   alert """
-        #         This file has been modified by someone else.
-        #         Please refresh the file and try again
-        #         """
 
       mcs = new MetadataContainerService(accessToken)
       mcs.saveEntity metadata.type, metadata.id, fileContents, (result) ->
