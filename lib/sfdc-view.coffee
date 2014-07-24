@@ -115,15 +115,19 @@ class SfdcView extends View
       @cont = new SfdcController(this)
       @cont.usernameEditor = @usernameEditor
 
+  getUtilityController: ->
+    if not @utilController?
+      @utilController = new SfdcController()
+    return @utilController
+
   saveCurrentFile: ->
-    cont = new SfdcController()
-    cont.saveFile()
+    this.getUtilityController().saveFile()
 
   refreshCurrentFile: ->
-    new SfdcController().refreshCurrentFile()
+    this.getUtilityController().refreshCurrentFile()
 
   deleteCurrentFile: ->
-    new SfdcController().deleteCurrentFile()
+    this.getUtilityController().deleteCurrentFile()
 
   createClass: ->
     params =

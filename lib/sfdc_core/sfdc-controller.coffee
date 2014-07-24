@@ -21,6 +21,13 @@ window.$ = window.jQuery = require 'jQuery'
 require '../ext/bootstrap/tabs.js'
 require '../ext/bootstrap/dropdowns.js'
 
+# Dirty metadata states
+# Describes if a peice of metadata is dirty and if it
+# needs to be refreshed
+MetadataStates =
+  Dirty: 'dirty',
+  Clean: 'clean'
+
 module.exports =
 class SfdcController extends BaseController
 
@@ -29,10 +36,13 @@ class SfdcController extends BaseController
     if @view
       this.init()
 
-    # List of mdetdata components that are "dirty"
+    # Map of mdetdata components that are "dirty"
     # Dirty in this case means that the last modified user on
-    # a piece of metadata is not the current user.
-    @dirtyMetadataIds = []
+    # a piece of metadata is not the current user. After refresh.
+    # the metadata is marked "clean" so that we know it
+    # is safe to Save to Server
+    @dirtyMetadataIds = {}
+
 
   init: ->
     self = this
@@ -73,15 +83,28 @@ class SfdcController extends BaseController
     self.view.passwordEditor.getEditor().on 'contents-modified', => @handleSensitiveText()
 
   setDirtyMetadata: (id) ->
-    @dirtyMetadataIds.push(id)
+    @dirtyMetadataIds[id] = MetadataStates.Dirty
+
+  setCleanMetadata: (id) ->
+    @dirtyMetadataIds[id] = MetadataStates.Clean
 
   isDirty: (id) ->
-    return @dirtyMetadataIds.indexOf(id) > 0
+    if not @dirtyMetadataIds[id]?
+      return false
 
-  clearDirtyMetadata: (id) ->
-    var idx = @dirtyMetadataIds.indexOf(id)
-    if idx > 0
-      @dirtyMetadataIds.splice(idx, 1)
+    return @dirtyMetadataIds[id] is MetadataStates.Dirty
+
+  isClean: (id) ->
+    if not @dirtyMetadataIds[id]?
+      return false
+
+    return @dirtyMetadataIds[id] is MetadataStates.Clean
+
+  clearMetadataState: (id) ->
+    if not @dirtyMetadataIds[id]?
+      return
+
+    delete @dirtyMetadataIds[id]
 
   setEnvironment: (env) ->
     @environment = env
@@ -460,11 +483,23 @@ class SfdcController extends BaseController
     loader = self.getAsyncLoader('Deploying your codez to SFDC...')
     loader.show()
 
+    doDeploy = (metadata) ->
+      mcs = new MetadataContainerService(accessToken)
+      mcs.saveEntity metadata.type, metadata.id, fileContents, (result) ->
+        loader.remove()
+        console.log "Deploy complete: %j", result
+        if result.success
+          AtomHelper.saveActiveItem()
+          alert 'All your codez are good'
+        else
+          alert "Your codez are bad:\n#{result.compilerErrors[0].problem}\nLine: #{result.compilerErrors[0].line}"
+
     fileContents = AtomHelper.getActiveEditorText()
     filePath = AtomHelper.getActiveEditor().getPath()
     metaFilePath = "#{filePath}.meta.json"
     fs.readFile metaFilePath, 'utf8', (err, data) ->
       if err
+        loader.remove()
         alert "Metadata error: #{err}"
         return
 
@@ -481,15 +516,23 @@ class SfdcController extends BaseController
         when 'page'
           service = new ApexPageService(accessToken)
 
-      mcs = new MetadataContainerService(accessToken)
-      mcs.saveEntity metadata.type, metadata.id, fileContents, (result) ->
-        loader.remove()
-        console.log "DONE: %j", result
-        if result.success
-          AtomHelper.saveActiveItem()
-          alert 'All your codez are good'
-        else
-          alert "Your codez are bad:\n#{result.compilerErrors[0].problem}\nLine: #{result.compilerErrors[0].line}"
+
+      service.retrieve metadata.id, (record) ->
+        # Check that the record hasn't been modified
+        # by another user
+        console.log "Checking meta state.."
+        myUserId = Config.read('user_id')
+        if myUserId isnt record.LastModifiedById and not self.isClean(record.Id)
+          console.log "Meta state is DIRTY"
+          loader.remove()
+          self.setDirtyMetadata(record.Id)
+          alert 'This file has been modified on the server and needs to be refreshed.'
+          return
+
+        # All clean. Start deploy.
+        self.clearMetadataState(record.Id)
+        doDeploy(metadata)
+
 
   refreshCurrentFile: ->
     self = this
@@ -526,6 +569,8 @@ class SfdcController extends BaseController
 
       service.retrieve metadata.id, (record) ->
         loader.remove()
+        if self.isDirty(metadata.id)
+          self.setCleanMetadata(metadata.id)
         AtomHelper.setActiveEditorText(record[service.sobjectContentField])
         AtomHelper.saveActiveItem()
 
