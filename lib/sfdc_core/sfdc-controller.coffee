@@ -29,12 +29,15 @@ class SfdcController extends BaseController
     if @view
       this.init()
 
-  init: ->
+    # List of mdetdata components that are "dirty"
+    # Dirty in this case means that the last modified user on
+    # a piece of metadata is not the current user.
+    @dirtyMetadataIds = []
 
+  init: ->
     self = this
 
-    self.view.on 'click', '#login-btn', (e) ->
-      self.doLogin()
+    self.view.loginButton.on 'click', => @doLogin()
 
     self.view.on 'keyup', 'input', (e) ->
       if e.keyCode is 27
@@ -64,8 +67,22 @@ class SfdcController extends BaseController
       self.createProject()
 
     # add username from config if it has been used before
-    self.view.find('#sfdc-username').val(Config.read('uname'))
+    self.view.usernameEditor.setText(Config.read('uname'))
 
+    # Handle sensitive text replacement on password field
+    self.view.passwordEditor.getEditor().on 'contents-modified', => @handleSensitiveText()
+
+  setDirtyMetadata: (id) ->
+    @dirtyMetadataIds.push(id)
+
+  isDirty: (id) ->
+    return @dirtyMetadataIds.indexOf(id) > 0
+
+  clearDirtyMetadata: (id) ->
+    var idx = @dirtyMetadataIds.indexOf(id)
+    if idx > 0
+      @dirtyMetadataIds.splice(idx, 1)
+    
   setEnvironment: (env) ->
     @environment = env
 
@@ -74,13 +91,21 @@ class SfdcController extends BaseController
       @environment = 'production'
     return @environment
 
+  handleSensitiveText: ->
+    text = this.view.passwordEditor.getText()
+    spanLine = this.view.passwordEditor.find('span.text.plain')
+    spanLine.html('')
+    for char in text
+      spanLine.append('*')
+
   doLogin: ->
-    self = this;
-    uname = self.view.find('#sfdc-username').val()
-    pass = self.view.find('#sfdc-password').val()
+    self = this
+
+    uname = self.view.usernameEditor.getText()
+    pass = self.view.passwordEditor.getText()
     env = self.getEnvironment()
     Config.write('uname', uname)
-    SfdcAuthService.login env, uname, pass, (success, tokenOrError, domain) ->
+    SfdcAuthService.login env, uname, pass, (success, tokenOrError, domain, userId) ->
       msgs = self.view.find('#sfdc-connect-msg')
 
       if not success
@@ -91,6 +116,7 @@ class SfdcController extends BaseController
       self.token = tokenOrError
       Config.write('token', self.token)
       Config.write('domain', domain)
+      Config.write('user_id', userId)
       msgs.find('span').css({color: '#0F0'}).html("Login successful!")
       msgs.fadeIn()
 
@@ -117,6 +143,7 @@ class SfdcController extends BaseController
           cb(null, 'classes')
           return
         self.classes = classes
+        console.log self.classes
         # Map of record ID to index
         self.classArrayIndexMap = {}
         self.classes.forEach (item, idx) ->
@@ -425,7 +452,7 @@ class SfdcController extends BaseController
 
   saveFile: ->
     self = this
-    accessToken = Config.read('token')
+    accessToken = self.getAccessToken()
     if not accessToken
       alert 'You must login to perform this operation'
       return
@@ -442,6 +469,29 @@ class SfdcController extends BaseController
         return
 
       metadata = JSON.parse data
+
+      service = null
+      switch(metadata.type)
+        when 'class'
+          service = new ApexClassService(accessToken)
+        when 'trigger'
+          service = new ApexTriggerService(accessToken)
+        when 'component'
+          service = new ApexComponentService(accessToken)
+        when 'page'
+          service = new ApexPageService(accessToken)
+
+      service.retrieve metadata.id, (record) ->
+        # Check that the record hasn't been modified
+        # by another user
+        console.log record
+        # myUserId = Config.read('user_id')
+        # if myUserId isnt record.LastModifiedById
+        #   alert """
+        #         This file has been modified by someone else.
+        #         Please refresh the file and try again
+        #         """
+
       mcs = new MetadataContainerService(accessToken)
       mcs.saveEntity metadata.type, metadata.id, fileContents, (result) ->
         loader.remove()

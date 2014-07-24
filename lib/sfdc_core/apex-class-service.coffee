@@ -27,7 +27,7 @@ class ApexClassService extends BaseToolingService
       else
         cb(records)
 
-    select = "Select Id,Body,Name,ApiVersion,Status,LastModifiedDate,LastModifiedById"
+    select = "Select Id,Body,Name,BodyCrc,ApiVersion,Status,LastModifiedDate,LastModifiedById"
     from = "from #{@sobjectType}"
     where = "where NamespacePrefix = null"
     orderBy = "order by Name"

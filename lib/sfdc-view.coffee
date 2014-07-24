@@ -1,4 +1,4 @@
-{View} = require 'atom'
+{View, EditorView} = require 'atom'
 SfdcController = require './sfdc_core/sfdc-controller'
 Config = require './helpers/config'
 NewMetadataView = require './sfdc_core/new-metadata-view'
@@ -21,26 +21,33 @@ class SfdcView extends View
         @li class: '', =>
           @a "Select Metadata", role: 'tab', 'data-toggle': 'tab', href: '#sfdc-metadata-tab'
 
-      @div class: 'tab-content', =>
+      @div class: 'tab-content', tabIndex: -1, =>
         @div class: 'tab-pane active', id: 'sfdc-connect-pane', =>
           @div class: 'container', =>
             @div class: 'row sfdc-row-marg-5', =>
-              @div class: 'col-sm-6', =>
-                @label "Username:", for: 'sfdc-username', class: 'sfdc-label'
-              @div class: 'col-sm-6', =>
-                @input type: 'text', class: 'sfdc-input sfdc-input-text', name: 'sfdc-username', id: 'sfdc-username'
+              # @div class: 'col-sm-6', =>
+              #   @label "Username:", for: 'sfdc-username', class: 'sfdc-label',
+              # @div class: 'col-sm-6', =>
+              #   @input type: 'text', class: 'form-control sfdc-input sfdc-input-text', name: 'sfdc-username', id: 'sfdc-username'
+                @div class: 'col-sm-12', =>
+                   @div class: 'editor-container', =>
+                       @subview 'usernameEditor', new EditorView(mini: true, placeholderText: 'Username')
             @div class: 'row sfdc-row-marg-5', =>
-              @div class: 'col-sm-6', =>
-                @label "Password:", for: 'sfdc-password', class: 'sfdc-label'
-              @div class: 'col-sm-6', =>
-                @input type: 'password', class: 'sfdc-input sfdc-input-text', name: 'sfdc-password', id: 'sfdc-password'
+              # @div class: 'col-sm-6', =>
+              #   @label "Password:", for: 'sfdc-password', class: 'sfdc-label'
+              # @div class: 'col-sm-6', =>
+              #   @input type: 'password', class: 'form-control sfdc-input sfdc-input-text', name: 'sfdc-password', id: 'sfdc-password', 'tab-index': 2
+              @div class: 'col-sm-12', =>
+                @div class: 'editor-container', =>
+                  @subview 'passwordEditor', new EditorView(mini: true, placeholderText: 'Password')
             @div class: 'row sfdc-row-marg-5', =>
-              @div class: 'col-sm-6', =>
-                @label "Environment:", for: 'sfdc-environment', class: 'sfdc-label'
-              @div class: 'col-sm-6', =>
+              # @div class: 'col-sm-2', =>
+              #   @label "Environment:", for: 'sfdc-environment', class: 'sfdc-label', id: 'sfdc-env-label'
+              @div class: 'col-sm-4', =>
                 @div id: 'sfdc-env-select', class: 'btn-group', =>
-                  @button "Select", type: 'button', class: 'btn btn-default dropdown-toggle', 'data-toggle': 'dropdown', =>
-                    @span class: 'caret'
+                  @button type: 'button', class: 'btn btn-default dropdown-toggle', 'data-toggle': 'dropdown', =>
+                    @span "Select Environment"
+                    @span class: 'caret sfdc-margin-left-5'
                   @ul class: 'dropdown-menu', role: 'menu', =>
                     @li =>
                       @a "Production", href: '#', 'data-environment': 'production'
@@ -49,9 +56,9 @@ class SfdcView extends View
                     @li =>
                       @a "Developer", href: '#', 'data-environment': 'developer'
 
-            @div class: 'row sfdc-row-marg-5', =>
-              @div class: 'col-sm-12', =>
-                @input type: 'button', value: 'Login', class: 'btn btn-full', id: 'login-btn'
+            @div id: 'sfdc-login-btn-cont', class: 'row sfdc-row-marg-5', =>
+              @div class: 'col-sm-4 col-md-offset-4', =>
+                @input outlet: 'loginButton', type: 'button', value: 'Login', class: 'btn sfdc-btn-full', id: 'login-btn'
             @div class: 'row sfdc-row-marg-5', =>
               @div class: 'col-sm-12', =>
                 @div id: 'sfdc-connect-msg', =>
@@ -76,6 +83,7 @@ class SfdcView extends View
             @button "Cancel", id: 'sfdc-cancel-proj-btn', type: 'button', class:'btn btn-warning'
 
   initialize: (serializeState) ->
+    self = this
     atom.workspaceView.command "sfdc:toggle", => @toggle()
     atom.workspaceView.command "sfdc:saveCurrentFile", => @saveCurrentFile()
     atom.workspaceView.command "sfdc:refreshCurrentFile", => @refreshCurrentFile()
@@ -105,6 +113,7 @@ class SfdcView extends View
     else
       atom.workspaceView.append(this)
       @cont = new SfdcController(this)
+      @cont.usernameEditor = @usernameEditor
 
   saveCurrentFile: ->
     cont = new SfdcController()
@@ -129,7 +138,7 @@ class SfdcView extends View
   createTrigger: ->
     params =
       type: 'trigger'
-      description: 'Enter a name for the Apex Trigger'
+      description: 'Enter a name and type for the Apex Trigger'
       fields:
         Name: 'Trigger Name'
         TableEnumOrId: 'Object Type'

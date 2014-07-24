@@ -13,8 +13,8 @@ class NewMetadataView extends View
           @div class: 'row sfdc-row-marg-5', =>
             @div class: 'col-sm-2 col-md-offset-4', =>
               @label "#{label}:", class: 'sfdc-label'
-            @div class: 'col-sm-2', =>
-              @input type: 'text', class: 'sfdc-input sfdc-input-text', name: "#{name}", id: "sdc-new-meta-field-#{name}"
+            @div class: 'col-sm-3', =>
+              @input type: 'text', class: 'form-control sfdc-input sfdc-input-text', name: "#{name}", id: "sdc-new-meta-field-#{name}"
         @div class: 'row sfdc-row-marg-5', =>
           @div class: 'col-sm-5 col-md-offset-4', =>
             @button "Create", type: 'button', class: 'btn btn-info', id: 'sfdc-create-metadata-btn'
