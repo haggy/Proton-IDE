@@ -3,7 +3,7 @@ fsPlus = require 'fs-plus'
 Config = require '../helpers/config'
 Client = require('node-rest-client').Client
 ProtonHelper = require '../helpers/proton-helper'
-
+Logger = require '../helpers/logger'
 
 module.exports =
 class BaseToolingService
@@ -39,16 +39,31 @@ class BaseToolingService
 
     @client = new Client()
 
+  logInfo: (str, obj) ->
+    Logger.info(str, obj)
+
+  logWarn: (str, obj) ->
+    Logger.warn(str, obj)
+
+  logError: (str, obj) ->
+    Logger.error(str, obj)
+
   getDefaultHeaders: ->
-    'Authorization': "Bearer #{@token}",'Content-Type': 'application/json'
+    'Authorization': "Bearer #{@token}",
+    'Content-Type': 'application/json',
+    'DebuggingHeader':
+      categories: [
+        "category":"Apex_code",
+        "level":"ERROR"
+      ]
 
   get: (service, params, cb) ->
     endpoint = "#{this.toolingBaseUrl}#{service}?#{params}"
     params =
       headers: this.getDefaultHeaders()
 
-    console.log endpoint
-    console.log params
+    @logInfo endpoint
+    @logInfo '', params
     @client.get endpoint, params, cb
 
   post: (service, params, cb) ->
@@ -57,8 +72,8 @@ class BaseToolingService
       data: params
       headers: this.getDefaultHeaders()
 
-    console.log endpoint
-    console.log postParams
+    @logInfo endpoint
+    @logInfo '', postParams
     @client.post endpoint, postParams, cb
 
   delete: (service, params, cb) ->
@@ -66,8 +81,8 @@ class BaseToolingService
     postParams =
       headers: this.getDefaultHeaders()
 
-    console.log endpoint
-    console.log postParams
+    @logInfo endpoint
+    @logInfo '', postParams
     @client.delete endpoint, postParams, cb
 
   getById: (type, id, cb) ->
@@ -102,7 +117,7 @@ class BaseToolingService
         return
       postParams[key] = params[key]
 
-    console.log postParams
+    @logInfo '', postParams
     self.post "sobjects/#{@sobjectType}", postParams, (data, response) ->
 
       if ProtonHelper.isArray(data) and data[0].errorCode

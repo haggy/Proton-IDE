@@ -15,8 +15,8 @@ class MetadataContainerService extends BaseToolingService
     params = name: contName
 
     onResult = (data, response) ->
-      console.log data
-      console.log response
+      @logInfo '', data
+      @logInfo '', response
       self.containerRef = data.records[0]
       cb(data)
 
@@ -26,8 +26,8 @@ class MetadataContainerService extends BaseToolingService
     self = this
     service = "sobjects/MetadataContainer/#{contId}"
     onResult = (data, response) ->
-      console.log data
-      console.log response
+      @logInfo '', data
+      @logInfo '', response
       self.containerRef = data.records[0]
       cb(data)
     @get service, null, onResult
@@ -37,7 +37,7 @@ class MetadataContainerService extends BaseToolingService
     service = 'query'
     params = "q=Select+id,Name+from+MetadataContainer+where+Name='#{@defaultContainerName}'"
     onResult = (data, response) ->
-      console.log data
+      self.logInfo '', data
       if data.size is 1
         self.containerRef = data.records[0]
         cb(self.containerRef)
@@ -49,14 +49,14 @@ class MetadataContainerService extends BaseToolingService
 
   saveMember: (memberType, memberReqData, cb) ->
     @post "sobjects/#{memberType}", memberReqData, (data, response) ->
-      console.log data
-      console.log response
+      @logInfo '', data
+      @logInfo '', response
       cb(data)
 
   containerAsyncRequest: (asyncReqData, cb) ->
     @post "sobjects/ContainerAsyncRequest", asyncReqData, (data, response) ->
-      console.log data
-      console.log response
+      @logInfo '', data
+      @logInfo '', response
       cb(data)
 
   saveEntity: (type, entityId, content, deployedCb) ->
@@ -65,19 +65,19 @@ class MetadataContainerService extends BaseToolingService
     entitySaveMemberId = null
 
     if not @containerRef
-      console.log 'No ref!'
+      self.logInfo 'No container ref!'
       async.series [
         (next) ->
-          console.log 'Loading cont'
+          self.logInfo 'Loading container'
           self.retrieveByName self.defaultContainerName, (cont) ->
             if not cont
               self.create self.defaultContainerName, (createRes) ->
                 next null, createRes.Id
             else
-              console.log "Passing container...#{cont.Id}"
+              self.logInfo "Passing container...#{cont.Id}"
               next null, cont.Id
         ,(next) ->
-          console.log "Creating entity member request..#{self.containerRef.Id}, #{entityId}"
+          self.logInfo "Creating entity member request..#{self.containerRef.Id}, #{entityId}"
           entitySaveInfo = self.getEntityInfoByType(type)
 
           apexMemberRequest =
@@ -88,7 +88,7 @@ class MetadataContainerService extends BaseToolingService
           self.saveMember entitySaveInfo.toolingApiMemberName,
             JSON.stringify(apexMemberRequest),
             (result) ->
-              console.log "AT SAVEMEMBER %j", result
+              self.logInfo "AT saveMember", result
               entitySaveMemberId = result.id
               next null, result
 
@@ -99,10 +99,10 @@ class MetadataContainerService extends BaseToolingService
             isCheckOnly: false
 
           self.containerAsyncRequest containerAsyncReqData, (result) ->
-            console.log result
+            self.logInfo '', result
             #containerAsyncReqId = result.Id
             self.checkOnDeploy result.id, (deployResults) ->
-              console.log "DEPLOY RESULT: %j", deployResults
+              self.logInfo "DEPLOY RESULT:", deployResults
               cbResultObj =
                 compilerErrors: JSON.parse deployResults.CompilerErrors
                 errorMsg: deployResults.ErrorMessage ?= ''
@@ -114,10 +114,10 @@ class MetadataContainerService extends BaseToolingService
                 # We need to delete the Apex member request or else
                 # we will get duplication errors when we try to save
                 # the file again
-                console.log "Deleting entity member #{entitySaveMemberId}"
+                self.logInfo "Deleting entity member #{entitySaveMemberId}"
                 entitySaveInfo = self.getEntityInfoByType(type)
                 self.deleteApexEntityMember entitySaveInfo.toolingApiMemberName, entitySaveMemberId, (delResult) ->
-                  console.log "Deleted entity member #{delResult}"
+                  self.logInfo "Deleted entity member #{delResult}"
 
               deployedCb(cbResultObj)
       ]
@@ -125,10 +125,10 @@ class MetadataContainerService extends BaseToolingService
   checkOnDeploy: (contAsyncReqId, cb) ->
     self = this
     intervalId = -1
-    console.log "Checking on deploy #{contAsyncReqId}"
+    @logInfo "Checking on deploy #{contAsyncReqId}"
 
-    timedCheck = (deployRes) ->
-      console.log deployRes
+    timedCheck = (deployRes) =>
+      @logInfo deployRes
       if deployRes.State isnt 'Queued'
         clearInterval intervalId
         cb(deployRes)

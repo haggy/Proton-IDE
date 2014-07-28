@@ -3,6 +3,7 @@ SfdcController = require './sfdc_core/sfdc-controller'
 Config = require './helpers/config'
 NewMetadataView = require './sfdc_core/new-metadata-view'
 NewMetadataController = require './sfdc_core/new-metadata-controller'
+RunAnonApexView = require './run-anon-apex-view'
 
 #Assign jQuery to global
 window.$ = window.jQuery = require('jQuery')
@@ -14,7 +15,7 @@ class SfdcView extends View
   @defaultProjPath: Config.read('project_path')
 
   @content: ->
-    @div class: 'overlay sfdc-connect', =>
+    @div class: 'overlay sfdc-overlay', =>
       @ul id: 'sfdc-main-tabs', class: 'nav nav-tabs', role: 'tablist', =>
         @li class: 'active', =>
           @a "Connect", role: 'tab', 'data-toggle': 'tab', href: '#sfdc-connect-pane'
@@ -92,6 +93,7 @@ class SfdcView extends View
     atom.workspaceView.command "sfdc:createPage", => @createPage()
     atom.workspaceView.command "sfdc:createTrigger", => @createTrigger()
     atom.workspaceView.command "sfdc:createComponent", => @createComponent()
+    atom.workspaceView.command "sfdc:executeApex", => @executeApex()
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
@@ -113,7 +115,6 @@ class SfdcView extends View
     else
       atom.workspaceView.append(this)
       @cont = new SfdcController(this)
-      @cont.usernameEditor = @usernameEditor
 
   getUtilityController: ->
     if not @utilController?
@@ -176,3 +177,6 @@ class SfdcView extends View
 
   center: ->
     $(this).center()
+
+  executeApex: ->
+    new RunAnonApexView({}).toggle()

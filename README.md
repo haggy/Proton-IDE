@@ -15,7 +15,7 @@ Once the install is complete, we need to set the project directory
 
 * Click *Atom* in the menu and click *Open Your Config*
 * Find the following lines (it will be near the very bottom of the configuration file):
-
+__If you don't see it, click Packages -> Proton -> Login/New Project, then check your config again__
 ```
 'proton':
   'project_path': ''
@@ -30,7 +30,7 @@ That's it! Keep reading for instructions on using the Proton IDE.
 ## Creating a new SFDC project
 
 * Navigate to Packages -> Proton
-* Select *New Project*
+* Select *Login/New Project*
 * Enter you username and password for a Salesforce instance (__NOTE:__ You may need to append your security token onto your password)
 * Select the org type (Is it Production, Sandbox or Developer?)
 * Click Login
@@ -67,3 +67,10 @@ You can create new Classes/Triggers/Pages/Components right from the IDE.
 * Click on the metadata type that you'd like to create
 * Fill in all required fields
 * Click create
+
+## Running code against your org
+You can execute anonymous apex from Proton and view the full debug log.
+
+* Navigate to __Packages -> Proton -> Execute Anonymous Apex__
+* Enter Apex code into the editor and click "Execute"
+* The debug log will be displayed under the *Results* tab

@@ -14,7 +14,13 @@ module.exports =
     # Set default config
     if not Config.read('project_path')
       Config.write('project_path', '')
-      
+
+    if not Config.read('api_version')
+      Config.write('api_version', '30.0')
+
+    if not Config.read('debug')
+      Config.write('debug', '0')
+
     @sfdcView = new SfdcView(state.sfdcViewState)
     atom.workspaceView.command "sfdc:convert", => @convert()
 
@@ -28,6 +34,3 @@ module.exports =
     # This assumes the active pane item is an editor
     editor = atom.workspace.activePaneItem
     editor.insertText('Hello, World!')
-
-  saveCurrentFile: ->
-    console.log 'Saving to server...'

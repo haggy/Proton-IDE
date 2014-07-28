@@ -7,10 +7,31 @@
 .sfdc-margin-left-5 {
   margin-left: 5px;
 }
+.sfdc-full {
+  width: 100%;
+}
 .sfdc-connect {
   top: 10%;
   left: 40%;
   width: inherit;
+}
+.sfdc-overlay {
+  top: 10%;
+  left: 40%;
+  width: inherit;
+}
+.sfdc-overlay ul.nav-tabs {
+  border-bottom: 1px solid #AAA;
+}
+.sfdc-overlay ul.nav-tabs li {
+  margin-bottom: -2px;
+  border-radius: 3px;
+}
+.sfdc-overlay ul.nav-tabs li.active {
+    border-top: 1px solid #AAA;
+    border-left: 1px solid #AAA;
+    border-right: 1px solid #AAA;
+    border-bottom: none;
 }
 .sfdc-label {
   margin-right: 5px;
@@ -85,6 +106,12 @@
 #sfdc-main-tabs li.active a {
   color: #FFF;
 }
+#sfdc-run-anon-apex-tabs li a {
+  color: #AAA;
+}
+#sfdc-run-anon-apex-tabs li.active a {
+  color: #FFF;
+}
 #create-new-metadata {
   left: 40%;
   width: inherit;
@@ -103,4 +130,18 @@
 }
 #sfdc-env-select, #sfdc-env-select > button {
   width: 100%;
+}
+#run-anon-apex-cont textarea {
+  min-height: 300px;
+}
+#sfdc-anon-apex-results-pane > container {
+  max-width: 800px;
+  overflow: auto;
+}
+#sfdc-exec-anon-errors {
+  margin: 10px 0;
+}
+#sfdc-exec-anon-errors > p {
+  color: #F00;
+  font-size: 14px;
 }

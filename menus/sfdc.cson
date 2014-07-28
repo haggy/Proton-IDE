@@ -1,7 +1,7 @@
 # See https://atom.io/docs/latest/creating-a-package#menus for more details
 'context-menu':
   '.overlayer':
-    'Proton: New Project': 'sfdc:toggle',
+    'Proton: Login/New Project': 'sfdc:toggle',
     'Proton: Save to server': 'sfdc:saveCurrentFile'
     'Proton: Refresh from Server': 'sfdc:refreshCurrentFile'
     'Proton: Delete from Server': 'sfdc:deleteCurrentFile'
@@ -12,7 +12,7 @@
     'submenu': [
       'label': 'Proton'
       'submenu': [
-        { 'label': 'New Project', 'command': 'sfdc:toggle' }
+        { 'label': 'Login/New Project', 'command': 'sfdc:toggle' }
         'label': 'Create metadata'
         'submenu': [
           { 'label': 'New Apex Class', 'command': 'sfdc:createClass' }
@@ -23,6 +23,7 @@
         { 'label': 'Save current file', 'command': 'sfdc:saveCurrentFile' }
         { 'label': 'Refresh current file', 'command': 'sfdc:refreshCurrentFile' }
         { 'label': 'Delete current file', 'command': 'sfdc:deleteCurrentFile' }
+        { 'label': 'Execute Anonymous Apex', 'command': 'sfdc:executeApex' }
       ]
     ]
   }

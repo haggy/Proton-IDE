@@ -13,3 +13,6 @@ class AsyncLoaderView extends View
 
   setLoadingText: (text) ->
     this.find('span.loader-text').html(text)
+
+  remove: ->
+    this.hide()

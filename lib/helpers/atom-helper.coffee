@@ -17,3 +17,6 @@ class AtomHelper
 
   this.saveActiveItem = ->
     this.getActivePane().saveActiveItem()
+
+  this.getProjectPath = ->
+    return atom.project.getPath()

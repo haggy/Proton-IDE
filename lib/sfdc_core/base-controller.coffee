@@ -1,6 +1,7 @@
 Config = require '../helpers/config'
 AtomHelper = require '../helpers/atom-helper'
 AsyncLoaderView = require '../async-loader-view'
+Logger = require '../helpers/logger'
 
 module.exports =
 class BaseController
@@ -26,3 +27,12 @@ class BaseController
     else
       @asyncLoader.setLoadingText(text)
     return @asyncLoader
+
+  logInfo: (str, obj) ->
+    Logger.info(str, obj)
+
+  logWarn: (str, obj) ->
+    Logger.warn(str, obj)
+    
+  logError: (str, obj) ->
+    Logger.error(str, obj)

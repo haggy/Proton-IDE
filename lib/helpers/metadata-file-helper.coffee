@@ -8,7 +8,7 @@ class MetadataFileHelper
     editor = atom.workspace.activePaneItem
     filePath = editor.getPath()
     metaFilePath = "#{filePath}.meta.json"
-    console.log metaFilePath
+    @logInfo '', metaFilePath
     fs.readFile metaFilePath, 'utf8', (err, data) ->
       if err
         cb(err, null)

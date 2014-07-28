@@ -37,7 +37,6 @@ class NewMetadataController extends BaseController
       params[$(elem).attr('name')] = $(elem).val()
 
     accessToken = self.getAccessToken()
-    console.log accessToken
 
     onResult = (err, path) ->
       loader.remove()
@@ -58,7 +57,7 @@ class NewMetadataController extends BaseController
       when 'component'
         service = new ApexComponentService(accessToken)
 
-        
+
     if not service
       alert "Invalid metadata type"
       return

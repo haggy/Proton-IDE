@@ -31,7 +31,6 @@ class MetadataItemView extends View
     self = this
     # Select all cb
     self.find('.sfdc-meta-select-all-cb').on 'click', (e) ->
-      console.log "Clicked!"
       self.toggleCheckboxes()
 
   onCheckboxChange: (cb) ->

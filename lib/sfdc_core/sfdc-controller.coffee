@@ -166,7 +166,7 @@ class SfdcController extends BaseController
           cb(null, 'classes')
           return
         self.classes = classes
-        console.log self.classes
+        self.logInfo '', self.classes
         # Map of record ID to index
         self.classArrayIndexMap = {}
         self.classes.forEach (item, idx) ->
@@ -272,19 +272,19 @@ class SfdcController extends BaseController
     async.series
       classes: (cb) ->
         self.createProjectClassFiles fullPath, (res) ->
-          console.log res
+          self.logInfo '', res
           cb(null, 'classes')
       pages: (cb) ->
         self.createProjectPageFiles fullPath, (res) ->
-          console.log res
+          self.logInfo '', res
           cb(null, 'pages')
       triggers: (cb) ->
         self.createProjectTriggerFiles fullPath, (res) ->
-          console.log res
+          self.logInfo '', res
           cb(null, 'triggers')
       components: (cb) ->
         self.createProjectComponentFiles fullPath, (res) ->
-          console.log res
+          self.logInfo '', res
           cb(null, 'components')
       , (results) ->
         atom.open pathsToOpen: [fullPath]
@@ -324,7 +324,7 @@ class SfdcController extends BaseController
       return
 
     createFileResult = (createRes) ->
-      console.log createRes
+      self.logInfo '', createRes
 
       if currRecord
         metaFileName = currRecord.Name + '.cls.meta.json'
@@ -364,7 +364,7 @@ class SfdcController extends BaseController
       return
 
     createFileResult = (createRes) ->
-      console.log createRes
+      self.logInfo '', createRes
 
       if currRecord
         metaFileName = currRecord.Name + '.trigger.meta.json'
@@ -406,7 +406,7 @@ class SfdcController extends BaseController
       return
 
     createFileResult = (createRes) ->
-      console.log createRes
+      self.logInfo '', createRes
 
       if currRecord
         metaFileName = currRecord.Name + '.page.meta.json'
@@ -446,7 +446,7 @@ class SfdcController extends BaseController
       return
 
     createFileResult = (createRes) ->
-      console.log createRes
+      self.logInfo '', createRes
 
       if currRecord
         metaFileName = currRecord.Name + '.component.meta.json'
@@ -487,7 +487,7 @@ class SfdcController extends BaseController
       mcs = new MetadataContainerService(accessToken)
       mcs.saveEntity metadata.type, metadata.id, fileContents, (result) ->
         loader.remove()
-        console.log "Deploy complete: %j", result
+        self.logInfo "Deploy complete:", result
         if result.success
           AtomHelper.saveActiveItem()
           alert 'All your codez are good'
@@ -520,10 +520,10 @@ class SfdcController extends BaseController
       service.retrieve metadata.id, (record) ->
         # Check that the record hasn't been modified
         # by another user
-        console.log "Checking meta state.."
+        self.logInfo "Checking meta state.."
         myUserId = Config.read('user_id')
         if myUserId isnt record.LastModifiedById and not self.isClean(record.Id)
-          console.log "Meta state is DIRTY"
+          self.logInfo "Meta state is DIRTY"
           loader.remove()
           self.setDirtyMetadata(record.Id)
           alert 'This file has been modified on the server and needs to be refreshed.'

@@ -1,4 +1,5 @@
 Client = require('node-rest-client').Client
+Logger = require('../helpers/logger')
 
 module.exports =
   class SfdcAuthService
@@ -33,12 +34,13 @@ module.exports =
       else
         url = this.loginUrl
 
-      self.client.post url, params, (data, response) ->
+      self.client.post url, params, (data, response) =>
         if data.error_description
+          Logger.error data.error_description
           cb(false, data.error_description, null, null)
           return
 
-        console.log "TOKEN: #{data.access_token}"
+        Logger.info "TOKEN: #{data.access_token}"
         userId = splitUserIdFromUrl(data.id)
         cb(true, data.access_token, data.instance_url, userId)
 

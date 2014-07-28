@@ -18,9 +18,9 @@ class ApexPageService extends BaseToolingService
     self = this
     records = []
 
-    handleResult = (data, response) ->
-      console.log data
-      console.log "Received #{data.records.length} records"
+    handleResult = (data, response) =>
+      @logInfo '', data
+      @logInfo "Received #{data.records.length} records"
       for record in data.records
         records.push record
 
