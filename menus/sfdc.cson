@@ -13,6 +13,7 @@
       'label': 'Proton'
       'submenu': [
         { 'label': 'Login/New Project', 'command': 'sfdc:toggle' }
+        { 'label': 'Refresh Project', 'command': 'sfdc:refreshProject' }
         'label': 'Create metadata'
         'submenu': [
           { 'label': 'New Apex Class', 'command': 'sfdc:createClass' }

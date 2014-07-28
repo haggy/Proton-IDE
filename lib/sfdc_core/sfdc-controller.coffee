@@ -3,6 +3,7 @@ fsPlus = require 'fs-plus'
 async = require 'async'
 BaseController = require './base-controller'
 Config = require '../helpers/config'
+ProtonHelper = require '../helpers/proton-helper'
 AtomHelper = require '../helpers/atom-helper'
 SfdcAuthService = require './sfdc-auth-service'
 MetadataFileHelper = require '../helpers/metadata-file-helper'
@@ -63,6 +64,9 @@ class SfdcController extends BaseController
       if $(this).attr('href') is '#sfdc-metadata-tab'
         self.view.showMetaLoader()
         self.selectMetadata()
+
+    if this.view.data('is_refresh')
+      $('#sfdc-main-tabs a[href="#sfdc-metadata-tab"]').trigger 'click'
 
     # Environment select event handler
     $('#sfdc-env-select ul li a').on 'click', (e) ->
@@ -156,7 +160,7 @@ class SfdcController extends BaseController
 
   selectMetadata: ->
     self = this
-    accessToken = @token
+    accessToken = @getAccessToken()
 
     loadClasses = (cb) ->
       classServ = new ApexClassService(accessToken)
@@ -262,14 +266,26 @@ class SfdcController extends BaseController
 
   createProject: ->
     self = this
-    fullPath = this.createProjectDirectory()
+    isRefresh = this.view.data('is_refresh')
+    fullPath = null
+
+    if not isRefresh
+      fullPath = this.createProjectDirectory()
+    else
+      fullPath = AtomHelper.getProjectPath()
+
+    @logInfo "Creating project in #{fullPath}"
     if not fullPath
       return
 
-    loader = self.getAsyncLoader('Creating a shiny, new project...')
+    loadText = if isRefresh then 'Refreshing this old project...' else 'Creating a shiny, new project...'
+    loader = self.getAsyncLoader(loadText)
     loader.show()
 
     async.series
+      clearDir: (cb) ->
+        ProtonHelper.clearDirectory fullPath, (success) ->
+          if success then cb(null, 'clear_dir') else cb(false, null)
       classes: (cb) ->
         self.createProjectClassFiles fullPath, (res) ->
           self.logInfo '', res
@@ -287,10 +303,16 @@ class SfdcController extends BaseController
           self.logInfo '', res
           cb(null, 'components')
       , (results) ->
-        atom.open pathsToOpen: [fullPath]
         self.wipeData()
         self.view.destroy()
         loader.remove()
+        if not isRefresh
+          atom.open pathsToOpen: [fullPath]
+        else
+          # If the window isn't reloaded... bad things happen
+          # 1) The Select Metadata window makes multiple callouts
+          # for the same metadata (1 per time it has been closed/reopened)
+          atom.reload()
 
   createProjectDirectory: ->
     projName = $('#sfdc-project-name').val()

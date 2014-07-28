@@ -12,7 +12,8 @@
     "sfdc:createPage",
     "sfdc:createTrigger",
     "sfdc:createComponent",
-    "sfdc:executeApex"
+    "sfdc:executeApex",
+    "sfdc:refreshProject"
   ],
   "repository": "https://github.com/haggy/Proton-IDE",
   "license": "MIT",
@@ -26,6 +27,7 @@
     "async": "*",
     "text-buffer": "2.4.0",
     "soap": "0.5.*",
-    "xml2js": "0.4.*"
+    "xml2js": "0.4.*",
+    "rimraf": "2.2.*"
   }
 }

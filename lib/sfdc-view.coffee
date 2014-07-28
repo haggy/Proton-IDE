@@ -84,8 +84,8 @@ class SfdcView extends View
             @button "Cancel", id: 'sfdc-cancel-proj-btn', type: 'button', class:'btn btn-warning'
 
   initialize: (serializeState) ->
-    self = this
     atom.workspaceView.command "sfdc:toggle", => @toggle()
+    atom.workspaceView.command "sfdc:refreshProject", => @toggle(true)
     atom.workspaceView.command "sfdc:saveCurrentFile", => @saveCurrentFile()
     atom.workspaceView.command "sfdc:refreshCurrentFile", => @refreshCurrentFile()
     atom.workspaceView.command "sfdc:deleteCurrentFile", => @deleteCurrentFile()
@@ -102,6 +102,7 @@ class SfdcView extends View
   destroy: ->
     this.find('#sfdc-metadata-select').html('Loading metadata...')
     @detach()
+    this.remove()
 
   showMetaLoader: ->
     this.find('#sfdc-metadata-select').html('<span id="metadata-loader">Loading metadata...')
@@ -109,10 +110,11 @@ class SfdcView extends View
   hideMetaLoader: ->
     this.find('#metadata-loader').remove()
 
-  toggle: ->
+  toggle: (isRefresh = false) ->
     if @hasParent()
-      @detach()
+      @destroy()
     else
+      this.data('is_refresh', isRefresh)
       atom.workspaceView.append(this)
       @cont = new SfdcController(this)
 
