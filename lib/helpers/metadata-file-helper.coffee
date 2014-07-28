@@ -1,5 +1,6 @@
 fsPlus = require 'fs-plus'
 fs = require 'fs'
+Logger = require './logger'
 
 module.exports =
 class MetadataFileHelper
@@ -8,7 +9,7 @@ class MetadataFileHelper
     editor = atom.workspace.activePaneItem
     filePath = editor.getPath()
     metaFilePath = "#{filePath}.meta.json"
-    @logInfo '', metaFilePath
+    Logger.info '', metaFilePath
     fs.readFile metaFilePath, 'utf8', (err, data) ->
       if err
         cb(err, null)

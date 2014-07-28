@@ -48,13 +48,13 @@ class MetadataContainerService extends BaseToolingService
 
 
   saveMember: (memberType, memberReqData, cb) ->
-    @post "sobjects/#{memberType}", memberReqData, (data, response) ->
+    @post "sobjects/#{memberType}", memberReqData, (data, response) =>
       @logInfo '', data
       @logInfo '', response
       cb(data)
 
   containerAsyncRequest: (asyncReqData, cb) ->
-    @post "sobjects/ContainerAsyncRequest", asyncReqData, (data, response) ->
+    @post "sobjects/ContainerAsyncRequest", asyncReqData, (data, response) =>
       @logInfo '', data
       @logInfo '', response
       cb(data)
