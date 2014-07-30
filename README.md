@@ -73,11 +73,11 @@ Proton IDE has a rich query editor built-in. It allows you to query/sort/update
 data in your org right from the IDE!
 
 ### To open the editor:
-* Navigate to __Packages -> Proton -> Interactive Query Editor__
+* Navigate to __Packages -> Proton -> Run Interactive Query__
 
 ### To perform a query:
 * The top 3 fields are for you select/from/where statements. __NOTE:__ Don't include
- use the `select`, `from`, or `where` keywords.
+the `select`, `from`, or `where` keywords.
 * __NOTE:__ You can also query relationally (Account.Name, Account.Owner.Name etc..)
 * Click *Execute Query* or press __[ENTER]__
 
