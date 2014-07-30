@@ -1,13 +1,3 @@
-# {
-#   "line" : 2,
-#   "column" : 0,
-#   "compiled" : false,
-#   "success" : false,
-#   "compileProblem" : "expecting a semi-colon, found '<EOF>'",
-#   "exceptionStackTrace" : null,
-#   "exceptionMessage" : null
-# }
-
 BaseSoapService = require './base-soap-service'
 
 module.exports =
@@ -18,7 +8,12 @@ class RunAnonApexService extends BaseSoapService
 
   execute: (apex, cb) ->
     @initClient (err, client) =>
+      if err?
+        @logError err
+        return
+        
       client.executeAnonymous String: apex, (err, sfResult, body) =>
+        @logInfo "Last request", client.lastRequest
         @logInfo "Exec anonymous result:", sfResult
         if err?
           @logError err

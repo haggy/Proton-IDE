@@ -1,6 +1,7 @@
 soap = require 'soap'
 xml2js = require('xml2js').parseString
 AtomHelper = require '../helpers/atom-helper'
+ProtonHelper = require '../helpers/proton-helper'
 Logger = require '../helpers/logger'
 
 WsdlData =
@@ -23,9 +24,9 @@ class BaseSoapService
 
   logError: (str, obj) ->
     Logger.error(str, obj)
-    
+
   initClient: (cb) ->
-    loc = "#{AtomHelper.getProjectPath()}/lib/#{WsdlData['30'].location}"
+    loc = "#{ProtonHelper.getAbsolutePackagePath()}/lib/#{WsdlData['30'].location}"
     soap.createClient loc, (err, client) =>
       @onClientCreate(err, client, cb)
 

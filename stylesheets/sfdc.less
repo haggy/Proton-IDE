@@ -3,6 +3,7 @@
 // See https://github.com/atom/atom-dark-ui/blob/master/stylesheets/ui-variables.less
 // for a full listing of what's available.
 @import "ui-variables";
+@import (css) "jquery.dynatable.css";
 
 .sfdc-margin-left-5 {
   margin-left: 5px;
@@ -144,4 +145,23 @@
 #sfdc-exec-anon-errors > p {
   color: #F00;
   font-size: 14px;
+}
+.sfdc-table-cell-changed {
+  background-color: rgba(255,0,125,0.3)
+}
+.sfdc-error-message {
+  color: #F00;
+  max-width: 800px;
+  font-size: 14px;
+  margin: 10px auto;
+}
+#sfdc-interactive-table-cont {
+  max-height: 500px;
+  overflow: auto;
+}
+.dynatable-page-link {
+  color: #AAA;
+}
+.dynatable-active-page {
+  color: #FFF;
 }

@@ -132,7 +132,7 @@ class SfdcController extends BaseController
     pass = self.view.passwordEditor.getText()
     env = self.getEnvironment()
     Config.write('uname', uname)
-    SfdcAuthService.login env, uname, pass, (success, tokenOrError, domain, userId) ->
+    SfdcAuthService.login env, uname, pass, (success, tokenOrError, domain, userId) =>
       msgs = self.view.find('#sfdc-connect-msg')
 
       if not success
@@ -140,8 +140,8 @@ class SfdcController extends BaseController
         msgs.fadeIn()
         return
 
-      self.token = tokenOrError
-      Config.write('token', self.token)
+      @clearToken()
+      Config.write('token', tokenOrError)
       Config.write('domain', domain)
       Config.write('user_id', userId)
       msgs.find('span').css({color: '#0F0'}).html("Login successful!")

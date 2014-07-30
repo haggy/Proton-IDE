@@ -4,6 +4,7 @@ Config = require './helpers/config'
 NewMetadataView = require './sfdc_core/new-metadata-view'
 NewMetadataController = require './sfdc_core/new-metadata-controller'
 RunAnonApexView = require './run-anon-apex-view'
+InteractiveQueryView = require './interactive-query-view'
 
 #Assign jQuery to global
 window.$ = window.jQuery = require('jQuery')
@@ -94,6 +95,7 @@ class SfdcView extends View
     atom.workspaceView.command "sfdc:createTrigger", => @createTrigger()
     atom.workspaceView.command "sfdc:createComponent", => @createComponent()
     atom.workspaceView.command "sfdc:executeApex", => @executeApex()
+    atom.workspaceView.command "sfdc:interactiveQuery", => @interactiveQuery()
 
   # Returns an object that can be retrieved when package is activated
   serialize: ->
@@ -182,3 +184,6 @@ class SfdcView extends View
 
   executeApex: ->
     new RunAnonApexView({}).toggle()
+
+  interactiveQuery: ->
+    new InteractiveQueryView().toggle()

@@ -68,6 +68,29 @@ You can create new Classes/Triggers/Pages/Components right from the IDE.
 * Fill in all required fields
 * Click create
 
+## Interactive Query Editor
+Proton IDE has a rich query editor built-in. It allows you to query/sort/update
+data in your org right from the IDE!
+
+### To open the editor:
+* Navigate to __Packages -> Proton -> Interactive Query Editor__
+
+### To perform a query:
+* The top 3 fields are for you select/from/where statements. __NOTE:__ Don't include
+ use the `select`, `from`, or `where` keywords.
+* __NOTE:__ You can also query relationally (Account.Name, Account.Owner.Name etc..)
+* Click *Execute Query* or press __[ENTER]__
+
+### To search and sort:
+* Use the column headers to sort.
+* Use the search box to search table data.
+
+### To update data:
+* Double click on the cell that you want to update
+* Enter the new value and press __[ENTER]__
+* You can edit multiple rows before saving
+* When finished, click *Save Rows*
+
 ## Running code against your org
 You can execute anonymous apex from Proton and view the full debug log.
 

@@ -13,7 +13,8 @@
     "sfdc:createTrigger",
     "sfdc:createComponent",
     "sfdc:executeApex",
-    "sfdc:refreshProject"
+    "sfdc:refreshProject",
+    "sfdc:interactiveQuery"
   ],
   "repository": "https://github.com/haggy/Proton-IDE",
   "license": "MIT",

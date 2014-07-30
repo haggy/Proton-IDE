@@ -25,6 +25,7 @@
         { 'label': 'Refresh current file', 'command': 'sfdc:refreshCurrentFile' }
         { 'label': 'Delete current file', 'command': 'sfdc:deleteCurrentFile' }
         { 'label': 'Execute Anonymous Apex', 'command': 'sfdc:executeApex' }
+        { 'label': 'Run Interactive Query', 'command': 'sfdc:interactiveQuery' }
       ]
     ]
   }
