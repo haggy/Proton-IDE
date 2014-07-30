@@ -1,7 +1,7 @@
 {
   "name": "Proton-IDE",
   "main": "./lib/sfdc",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Salesforce.com IDE for the Atom editor",
   "activationEvents": [
     "sfdc:toggle",
