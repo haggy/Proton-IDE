@@ -6,8 +6,8 @@ __NOTE:__ This IDE is still in BETA and is being actively developed. If you enco
 please check the known issues and log an issue in Github if it does not already exist. Thanks and enjoy!
 
 ## Installation
-__Proton__ is available as an Atom package. Use `cmd+,` on a Mac to pull up your
-Atom settings. Search for Proton IDE.
+__Proton__ is available as an Atom package. Use `cmd+,` on a Mac  or `ctrl+,`
+on Windows to pull up your Atom settings. Search for Proton IDE.
 
 ### Configuration
 Once the install is complete, we need to set the project directory
